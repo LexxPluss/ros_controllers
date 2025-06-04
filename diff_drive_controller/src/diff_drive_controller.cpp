@@ -272,6 +272,37 @@ namespace diff_drive_controller{
     controller_nh.param("angular/z/max_jerk"               , limiter_ang_.max_jerk               ,  limiter_ang_.max_jerk              );
     controller_nh.param("angular/z/min_jerk"               , limiter_ang_.min_jerk               , -limiter_ang_.max_jerk              );
 
+    auto clamp_max = [](const std::string& name, double& value)
+    {
+      if (value < 0.0)
+      {
+        ROS_WARN_STREAM(name << " is less than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    auto clamp_min = [](const std::string& name, double& value)
+    {
+      if (value > 0.0) {
+        ROS_WARN_STREAM(name << " is greater than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    clamp_max("limiter_lin_.max_velocity", limiter_lin_.max_velocity);
+    clamp_min("limiter_lin_.min_velocity", limiter_lin_.min_velocity);
+    clamp_max("limiter_lin_.max_acceleration", limiter_lin_.max_acceleration);
+    clamp_min("limiter_lin_.min_acceleration", limiter_lin_.min_acceleration);
+    clamp_max("limiter_lin_.max_jerk", limiter_lin_.max_jerk);
+    clamp_min("limiter_lin_.min_jerk", limiter_lin_.min_jerk);
+
+    clamp_max("limiter_ang_.max_velocity", limiter_ang_.max_velocity);
+    clamp_min("limiter_ang_.min_velocity", limiter_ang_.min_velocity);
+    clamp_max("limiter_ang_.max_acceleration", limiter_ang_.max_acceleration);
+    clamp_min("limiter_ang_.min_acceleration", limiter_ang_.min_acceleration);
+    clamp_max("limiter_ang_.max_jerk", limiter_ang_.max_jerk);
+    clamp_min("limiter_ang_.min_jerk", limiter_ang_.min_jerk);
+
     // Publish limited velocity:
     controller_nh.param("publish_cmd", publish_cmd_, publish_cmd_);
 
