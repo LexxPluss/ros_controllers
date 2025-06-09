@@ -47,18 +47,36 @@ TEST_F(DiffDriveControllerTest, testDynReconfServerAlive)
   // Expect server is callable (get-fashion)
   EXPECT_TRUE(ros::service::call("diffbot_controller/set_parameters", srv_req, srv_resp));
 
-  EXPECT_EQ(1, srv_resp.config.bools.size());
+  EXPECT_EQ(7, srv_resp.config.bools.size());
 
   if (!srv_resp.config.bools.empty())
   {
     EXPECT_EQ("enable_odom_tf", srv_resp.config.bools[0].name);
     // expect false since it is set to false in the .test
     EXPECT_EQ(false, srv_resp.config.bools[0].value);
+
+    EXPECT_EQ("linear_x_has_velocity_limits", srv_resp.config.bools[1].name);
+    EXPECT_EQ(true, srv_resp.config.bools[1].value);
+
+    EXPECT_EQ("linear_x_has_acceleration_limits", srv_resp.config.bools[2].name);
+    EXPECT_EQ(true, srv_resp.config.bools[2].value);
+
+    EXPECT_EQ("linear_x_has_jerk_limits", srv_resp.config.bools[3].name);
+    EXPECT_EQ(false, srv_resp.config.bools[3].value);
+
+    EXPECT_EQ("angular_z_has_velocity_limits", srv_resp.config.bools[4].name);
+    EXPECT_EQ(true, srv_resp.config.bools[4].value);
+
+    EXPECT_EQ("angular_z_has_acceleration_limits", srv_resp.config.bools[5].name);
+    EXPECT_EQ(true, srv_resp.config.bools[5].value);
+
+    EXPECT_EQ("angular_z_has_jerk_limits", srv_resp.config.bools[6].name);
+    EXPECT_EQ(false, srv_resp.config.bools[6].value);
   }
 
-  EXPECT_EQ(4, srv_resp.config.doubles.size());
+  EXPECT_EQ(16, srv_resp.config.doubles.size());
 
-  if (srv_resp.config.doubles.size() >= 4)
+  if (srv_resp.config.doubles.size() >= 16)
   {
     EXPECT_EQ("left_wheel_radius_multiplier", srv_resp.config.doubles[0].name);
     EXPECT_EQ(1, srv_resp.config.doubles[0].value);
@@ -71,6 +89,42 @@ TEST_F(DiffDriveControllerTest, testDynReconfServerAlive)
 
     EXPECT_EQ("publish_rate", srv_resp.config.doubles[3].name);
     EXPECT_EQ(50, srv_resp.config.doubles[3].value);
+
+    EXPECT_EQ("linear_x_min_velocity", srv_resp.config.doubles[4].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[4].value);
+
+    EXPECT_EQ("linear_x_max_velocity", srv_resp.config.doubles[5].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[5].value);
+
+    EXPECT_EQ("linear_x_min_acceleration", srv_resp.config.doubles[6].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[6].value);
+
+    EXPECT_EQ("linear_x_max_acceleration", srv_resp.config.doubles[7].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[7].value);
+
+    EXPECT_EQ("linear_x_min_jerk", srv_resp.config.doubles[8].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[8].value);
+
+    EXPECT_EQ("linear_x_max_jerk", srv_resp.config.doubles[9].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[9].value);
+
+    EXPECT_EQ("angular_z_min_velocity", srv_resp.config.doubles[10].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[10].value);
+
+    EXPECT_EQ("angular_z_max_velocity", srv_resp.config.doubles[11].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[11].value);
+
+    EXPECT_EQ("angular_z_min_acceleration", srv_resp.config.doubles[12].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[12].value);
+
+    EXPECT_EQ("angular_z_max_acceleration", srv_resp.config.doubles[13].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[13].value);
+
+    EXPECT_EQ("angular_z_min_jerk", srv_resp.config.doubles[14].name);
+    EXPECT_EQ(-1, srv_resp.config.doubles[14].value);
+
+    EXPECT_EQ("angular_z_max_jerk", srv_resp.config.doubles[15].name);
+    EXPECT_EQ(1, srv_resp.config.doubles[15].value);
   }
 
   dynamic_reconfigure::DoubleParameter double_param;
@@ -94,26 +148,115 @@ TEST_F(DiffDriveControllerTest, testDynReconfServerAlive)
 
   srv_req.config.doubles.push_back(double_param);
 
+  double_param.name = "linear_x_min_velocity";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "linear_x_max_velocity";
+  double_param.value = 0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "linear_x_min_acceleration";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "linear_x_max_acceleration";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "linear_x_min_jerk";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "linear_x_max_jerk";
+  double_param.value = 0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_min_velocity";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_max_velocity";
+  double_param.value = 0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_min_acceleration";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_max_acceleration";
+  double_param.value = 0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_min_jerk";
+  double_param.value = -0.5;
+  srv_req.config.doubles.push_back(double_param);
+
+  double_param.name = "angular_z_max_jerk";
+  double_param.value = 0.5;
+  srv_req.config.doubles.push_back(double_param);
+
   dynamic_reconfigure::BoolParameter bool_param;
   bool_param.name = "enable_odom_tf";
   bool_param.value = false;
+  srv_req.config.bools.push_back(bool_param);
 
+  bool_param.name = "linear_x_has_velocity_limits";
+  bool_param.value = false;
+  srv_req.config.bools.push_back(bool_param);
+
+  bool_param.name = "linear_x_has_acceleration_limits";
+  bool_param.value = true;
+  srv_req.config.bools.push_back(bool_param);
+
+  bool_param.name = "linear_x_has_jerk_limits";
+  bool_param.value = false;
+  srv_req.config.bools.push_back(bool_param);
+
+  bool_param.name = "angular_z_has_velocity_limits";
+  bool_param.value = false;
+  srv_req.config.bools.push_back(bool_param);
+
+  bool_param.name = "angular_z_has_acceleration_limits";
+  bool_param.value = false;
+  srv_req.config.bools.push_back(bool_param);
+
+  bool_param.name = "angular_z_has_jerk_limits";
+  bool_param.value = false;
   srv_req.config.bools.push_back(bool_param);
 
   // Expect server is callable (set-fashion)
   EXPECT_TRUE(ros::service::call("diffbot_controller/set_parameters", srv_req, srv_resp));
 
-  EXPECT_EQ(1, srv_resp.config.bools.size());
+  EXPECT_EQ(7, srv_resp.config.bools.size());
 
   if (!srv_resp.config.bools.empty())
   {
     EXPECT_EQ("enable_odom_tf", srv_resp.config.bools[0].name);
     EXPECT_EQ(false, srv_resp.config.bools[0].value);
+
+    EXPECT_EQ("linear_x_has_velocity_limits", srv_resp.config.bools[1].name);
+    EXPECT_EQ(false, srv_resp.config.bools[1].value);
+
+    EXPECT_EQ("linear_x_has_acceleration_limits", srv_resp.config.bools[2].name);
+    EXPECT_EQ(true, srv_resp.config.bools[2].value);
+
+    EXPECT_EQ("linear_x_has_jerk_limits", srv_resp.config.bools[3].name);
+    EXPECT_EQ(false, srv_resp.config.bools[3].value);
+
+    EXPECT_EQ("angular_z_has_velocity_limits", srv_resp.config.bools[4].name);
+    EXPECT_EQ(false, srv_resp.config.bools[4].value);
+
+    EXPECT_EQ("angular_z_has_acceleration_limits", srv_resp.config.bools[5].name);
+    EXPECT_EQ(false, srv_resp.config.bools[5].value);
+
+    EXPECT_EQ("angular_z_has_jerk_limits", srv_resp.config.bools[6].name);
+    EXPECT_EQ(false, srv_resp.config.bools[6].value);
   }
 
-  EXPECT_EQ(4, srv_resp.config.doubles.size());
+  EXPECT_EQ(16, srv_resp.config.doubles.size());
 
-  if (srv_resp.config.doubles.size() >= 4)
+  if (srv_resp.config.doubles.size() >= 16)
   {
     EXPECT_EQ("left_wheel_radius_multiplier", srv_resp.config.doubles[0].name);
     EXPECT_EQ(0.95, srv_resp.config.doubles[0].value);
@@ -126,6 +269,42 @@ TEST_F(DiffDriveControllerTest, testDynReconfServerAlive)
 
     EXPECT_EQ("publish_rate", srv_resp.config.doubles[3].name);
     EXPECT_EQ(150, srv_resp.config.doubles[3].value);
+
+    EXPECT_EQ("linear_x_min_velocity", srv_resp.config.doubles[4].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[4].value);
+
+    EXPECT_EQ("linear_x_max_velocity", srv_resp.config.doubles[5].name);
+    EXPECT_EQ(0.5, srv_resp.config.doubles[5].value);
+
+    EXPECT_EQ("linear_x_min_acceleration", srv_resp.config.doubles[6].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[6].value);
+
+    EXPECT_EQ("linear_x_max_acceleration", srv_resp.config.doubles[7].name);
+    EXPECT_EQ(0.0, srv_resp.config.doubles[7].value);
+
+    EXPECT_EQ("linear_x_min_jerk", srv_resp.config.doubles[8].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[8].value);
+
+    EXPECT_EQ("linear_x_max_jerk", srv_resp.config.doubles[9].name);
+    EXPECT_EQ(0.5, srv_resp.config.doubles[9].value);
+
+    EXPECT_EQ("angular_z_min_velocity", srv_resp.config.doubles[10].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[10].value);
+
+    EXPECT_EQ("angular_z_max_velocity", srv_resp.config.doubles[11].name);
+    EXPECT_EQ(0.5, srv_resp.config.doubles[11].value);
+
+    EXPECT_EQ("angular_z_min_acceleration", srv_resp.config.doubles[12].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[12].value);
+
+    EXPECT_EQ("angular_z_max_acceleration", srv_resp.config.doubles[13].name);
+    EXPECT_EQ(0.5, srv_resp.config.doubles[13].value);
+
+    EXPECT_EQ("angular_z_min_jerk", srv_resp.config.doubles[14].name);
+    EXPECT_EQ(-0.5, srv_resp.config.doubles[14].value);
+
+    EXPECT_EQ("angular_z_max_jerk", srv_resp.config.doubles[15].name);
+    EXPECT_EQ(0.5, srv_resp.config.doubles[15].value);
   }
 }
 

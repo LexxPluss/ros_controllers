@@ -195,7 +195,7 @@ if (CATKIN_ENABLE_TESTING)
     test/diff_drive_dyn_reconf.test
     test/diff_drive_dyn_reconf_test.cpp
   )
-  target_link_libraries(diff_drive_dyn_reconf_test ${catkin_LIBRARIES} ${test_LIBRARIES})
+  target_link_libraries(diff_drive_dyn_reconf_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${test_LIBRARIES})
 
 endif()
 
