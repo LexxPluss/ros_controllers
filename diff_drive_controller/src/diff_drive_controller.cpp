@@ -276,7 +276,7 @@ namespace diff_drive_controller{
     {
       if (value < 0.0)
       {
-        ROS_WARN_STREAM(name << " is less than 0.0 (" << value << "), clamped to 0.0");
+        ROS_FATAL_STREAM(name << " is less than 0.0 (" << value << "), clamped to 0.0");
         value = 0.0;
       }
     };
@@ -284,7 +284,7 @@ namespace diff_drive_controller{
     auto clamp_min = [](const std::string& name, double& value)
     {
       if (value > 0.0) {
-        ROS_WARN_STREAM(name << " is greater than 0.0 (" << value << "), clamped to 0.0");
+        ROS_FATAL_STREAM(name << " is greater than 0.0 (" << value << "), clamped to 0.0");
         value = 0.0;
       }
     };
