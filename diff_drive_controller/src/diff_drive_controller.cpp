@@ -849,6 +849,26 @@ namespace diff_drive_controller{
     right_wheel_radius_multiplier_ = dynamic_params.right_wheel_radius_multiplier;
     wheel_separation_multiplier_   = dynamic_params.wheel_separation_multiplier;
 
+    limiter_lin_.has_velocity_limits = dynamic_params.linear_x_has_velocity_limits;
+    limiter_lin_.max_velocity = dynamic_params.linear_x_max_velocity;
+    limiter_lin_.min_velocity = dynamic_params.linear_x_min_velocity;
+    limiter_lin_.has_acceleration_limits = dynamic_params.linear_x_has_acceleration_limits;
+    limiter_lin_.max_acceleration = dynamic_params.linear_x_max_acceleration;
+    limiter_lin_.min_acceleration = dynamic_params.linear_x_min_acceleration;
+    limiter_lin_.has_jerk_limits = dynamic_params.linear_x_has_jerk_limits;
+    limiter_lin_.max_jerk = dynamic_params.linear_x_max_jerk;
+    limiter_lin_.min_jerk = dynamic_params.linear_x_min_jerk;
+
+    limiter_ang_.has_velocity_limits = dynamic_params.angular_z_has_velocity_limits;
+    limiter_ang_.max_velocity = dynamic_params.angular_z_max_velocity;
+    limiter_ang_.min_velocity = dynamic_params.angular_z_min_velocity;
+    limiter_ang_.has_acceleration_limits = dynamic_params.angular_z_has_acceleration_limits;
+    limiter_ang_.max_acceleration = dynamic_params.angular_z_max_acceleration;
+    limiter_ang_.min_acceleration = dynamic_params.angular_z_min_acceleration;
+    limiter_ang_.has_jerk_limits = dynamic_params.angular_z_has_jerk_limits;
+    limiter_ang_.max_jerk = dynamic_params.angular_z_max_jerk;
+    limiter_ang_.min_jerk = dynamic_params.angular_z_min_jerk;
+
     publish_period_ = ros::Duration(1.0 / dynamic_params.publish_rate);
     enable_odom_tf_ = dynamic_params.enable_odom_tf;
   }
