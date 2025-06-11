@@ -103,6 +103,12 @@ if (CATKIN_ENABLE_TESTING)
   )
   target_link_libraries(diff_drive_limits_test ${catkin_LIBRARIES} ${test_LIBRARIES})
 
+  add_rostest_gtest(diff_drive_invalid_limits_test
+    test/diff_drive_controller_invalid_limits.test
+    test/diff_drive_invalid_limits_test.cpp
+  )
+  target_link_libraries(diff_drive_invalid_limits_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${test_LIBRARIES})
+
   add_rostest_gtest(diff_drive_timeout_test
     test/diff_drive_timeout.test
     test/diff_drive_timeout_test.cpp
@@ -189,7 +195,7 @@ if (CATKIN_ENABLE_TESTING)
     test/diff_drive_dyn_reconf.test
     test/diff_drive_dyn_reconf_test.cpp
   )
-  target_link_libraries(diff_drive_dyn_reconf_test ${catkin_LIBRARIES} ${test_LIBRARIES})
+  target_link_libraries(diff_drive_dyn_reconf_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${test_LIBRARIES})
 
 endif()
 

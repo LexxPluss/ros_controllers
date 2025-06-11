@@ -202,6 +202,26 @@ namespace diff_drive_controller{
       double publish_rate;
       bool enable_odom_tf;
 
+      bool linear_x_has_velocity_limits;
+      double linear_x_min_velocity;
+      double linear_x_max_velocity;
+      bool linear_x_has_acceleration_limits;
+      double linear_x_min_acceleration;
+      double linear_x_max_acceleration;
+      bool linear_x_has_jerk_limits;
+      double linear_x_min_jerk;
+      double linear_x_max_jerk;
+
+      bool angular_z_has_velocity_limits;
+      double angular_z_min_velocity;
+      double angular_z_max_velocity;
+      bool angular_z_has_acceleration_limits;
+      double angular_z_min_acceleration;
+      double angular_z_max_acceleration;
+      bool angular_z_has_jerk_limits;
+      double angular_z_min_jerk;
+      double angular_z_max_jerk;
+
       DynamicParams()
         : left_wheel_radius_multiplier(1.0)
         , right_wheel_radius_multiplier(1.0)
@@ -209,6 +229,24 @@ namespace diff_drive_controller{
         , publish_cmd(false)
         , publish_rate(50)
         , enable_odom_tf(true)
+        , linear_x_has_velocity_limits(true)
+        , linear_x_min_velocity(-1.0)
+        , linear_x_max_velocity(1.0)
+        , linear_x_has_acceleration_limits(true)
+        , linear_x_min_acceleration(-1.0)
+        , linear_x_max_acceleration(1.0)
+        , linear_x_has_jerk_limits(false)
+        , linear_x_min_jerk(-1.0)
+        , linear_x_max_jerk(1.0)
+        , angular_z_has_velocity_limits(true)
+        , angular_z_min_velocity(-1.0)
+        , angular_z_max_velocity(1.0)
+        , angular_z_has_acceleration_limits(true)
+        , angular_z_min_acceleration(-1.0)
+        , angular_z_max_acceleration(1.0)
+        , angular_z_has_jerk_limits(false)
+        , angular_z_min_jerk(-1.0)
+        , angular_z_max_jerk(1.0)
       {}
 
       friend std::ostream& operator<<(std::ostream& os, const DynamicParams& params)
@@ -223,7 +261,29 @@ namespace diff_drive_controller{
            << "\tPublication parameters:\n"
            << "\t\tPublish executed velocity command: " << (params.publish_cmd?"enabled":"disabled") << "\n"
            << "\t\tPublication rate: " << params.publish_rate                 << "\n"
-           << "\t\tPublish frame odom on tf: " << (params.enable_odom_tf?"enabled":"disabled");
+           << "\t\tPublish frame odom on tf: " << (params.enable_odom_tf?"enabled":"disabled") << "\n"
+           //
+           << "\Translation parameters:\n"
+           << "\t\tlinear/x has velocity limits: " << (params.linear_x_has_velocity_limits?"yes":"no") << "\n"
+           << "\t\tlinear/x min velocity: " << params.linear_x_min_velocity << "\n"
+           << "\t\tlinear/x max velocity: " << params.linear_x_max_velocity << "\n"
+           << "\t\tlinear/x has acceleration limits: " << (params.linear_x_has_acceleration_limits?"yes":"no") << "\n"
+           << "\t\tlinear/x min acceleration: " << params.linear_x_min_acceleration << "\n"
+           << "\t\tlinear/x max acceleration: " << params.linear_x_max_acceleration << "\n"
+           << "\t\tlinear/x has jerk limits: " << (params.linear_x_has_jerk_limits?"yes":"no") << "\n"
+           << "\t\tlinear/x min jerk: " << params.linear_x_min_jerk << "\n"
+           << "\t\tlinear/x max jerk: " << params.linear_x_max_jerk << "\n"
+           //
+           << "\tAngular parameters:\n"
+           << "\t\tangular/z has velocity limits: " << (params.angular_z_has_velocity_limits?"yes":"no") << "\n"
+           << "\t\tangular/z min velocity: " << params.angular_z_min_velocity << "\n"
+           << "\t\tangular/z max velocity: " << params.angular_z_max_velocity << "\n"
+           << "\t\tangular/z has acceleration limits: " << (params.angular_z_has_acceleration_limits?"yes":"no") << "\n"
+           << "\t\tangular/z min acceleration: " << params.angular_z_min_acceleration << "\n"
+           << "\t\tangular/z max acceleration: " << params.angular_z_max_acceleration << "\n"
+           << "\t\tangular/z has jerk limits: " << (params.angular_z_has_jerk_limits?"yes":"no") << "\n"
+           << "\t\tangular/z min jerk: " << params.angular_z_min_jerk << "\n"
+           << "\t\tangular/z max jerk: " << params.angular_z_max_jerk;
 
         return os;
       }

@@ -272,6 +272,37 @@ namespace diff_drive_controller{
     controller_nh.param("angular/z/max_jerk"               , limiter_ang_.max_jerk               ,  limiter_ang_.max_jerk              );
     controller_nh.param("angular/z/min_jerk"               , limiter_ang_.min_jerk               , -limiter_ang_.max_jerk              );
 
+    auto clamp_max = [](const std::string& name, double& value)
+    {
+      if (value < 0.0)
+      {
+        ROS_FATAL_STREAM(name << " is less than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    auto clamp_min = [](const std::string& name, double& value)
+    {
+      if (value > 0.0) {
+        ROS_FATAL_STREAM(name << " is greater than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    clamp_max("limiter_lin_.max_velocity", limiter_lin_.max_velocity);
+    clamp_min("limiter_lin_.min_velocity", limiter_lin_.min_velocity);
+    clamp_max("limiter_lin_.max_acceleration", limiter_lin_.max_acceleration);
+    clamp_min("limiter_lin_.min_acceleration", limiter_lin_.min_acceleration);
+    clamp_max("limiter_lin_.max_jerk", limiter_lin_.max_jerk);
+    clamp_min("limiter_lin_.min_jerk", limiter_lin_.min_jerk);
+
+    clamp_max("limiter_ang_.max_velocity", limiter_ang_.max_velocity);
+    clamp_min("limiter_ang_.min_velocity", limiter_ang_.min_velocity);
+    clamp_max("limiter_ang_.max_acceleration", limiter_ang_.max_acceleration);
+    clamp_min("limiter_ang_.min_acceleration", limiter_ang_.min_acceleration);
+    clamp_max("limiter_ang_.max_jerk", limiter_ang_.max_jerk);
+    clamp_min("limiter_ang_.min_jerk", limiter_ang_.min_jerk);
+
     // Publish limited velocity:
     controller_nh.param("publish_cmd", publish_cmd_, publish_cmd_);
 
@@ -364,6 +395,26 @@ namespace diff_drive_controller{
     dynamic_params.publish_rate = publish_rate;
     dynamic_params.enable_odom_tf = enable_odom_tf_;
 
+    dynamic_params.linear_x_has_velocity_limits = limiter_lin_.has_velocity_limits;
+    dynamic_params.linear_x_min_velocity = limiter_lin_.min_velocity;
+    dynamic_params.linear_x_max_velocity = limiter_lin_.max_velocity;
+    dynamic_params.linear_x_has_acceleration_limits = limiter_lin_.has_acceleration_limits;
+    dynamic_params.linear_x_min_acceleration = limiter_lin_.min_acceleration;
+    dynamic_params.linear_x_max_acceleration = limiter_lin_.max_acceleration;
+    dynamic_params.linear_x_has_jerk_limits = limiter_lin_.has_jerk_limits;
+    dynamic_params.linear_x_min_jerk = limiter_lin_.min_jerk;
+    dynamic_params.linear_x_max_jerk = limiter_lin_.max_jerk;
+
+    dynamic_params.angular_z_has_velocity_limits = limiter_ang_.has_velocity_limits;
+    dynamic_params.angular_z_min_velocity = limiter_ang_.min_velocity;
+    dynamic_params.angular_z_max_velocity = limiter_ang_.max_velocity;
+    dynamic_params.angular_z_has_acceleration_limits = limiter_ang_.has_acceleration_limits;
+    dynamic_params.angular_z_min_acceleration = limiter_ang_.min_acceleration;
+    dynamic_params.angular_z_max_acceleration = limiter_ang_.max_acceleration;
+    dynamic_params.angular_z_has_jerk_limits = limiter_ang_.has_jerk_limits;
+    dynamic_params.angular_z_min_jerk = limiter_ang_.min_jerk;
+    dynamic_params.angular_z_max_jerk = limiter_ang_.max_jerk;
+
     dynamic_params_.writeFromNonRT(dynamic_params);
 
     // Initialize dynamic_reconfigure server
@@ -374,6 +425,26 @@ namespace diff_drive_controller{
 
     config.publish_rate = publish_rate;
     config.enable_odom_tf = enable_odom_tf_;
+
+    config.linear_x_has_velocity_limits = limiter_lin_.has_velocity_limits;
+    config.linear_x_min_velocity = limiter_lin_.min_velocity;
+    config.linear_x_max_velocity = limiter_lin_.max_velocity;
+    config.linear_x_has_acceleration_limits = limiter_lin_.has_acceleration_limits;
+    config.linear_x_min_acceleration = limiter_lin_.min_acceleration;
+    config.linear_x_max_acceleration = limiter_lin_.max_acceleration;
+    config.linear_x_has_jerk_limits = limiter_lin_.has_jerk_limits;
+    config.linear_x_min_jerk = limiter_lin_.min_jerk;
+    config.linear_x_max_jerk = limiter_lin_.max_jerk;
+
+    config.angular_z_has_velocity_limits = limiter_ang_.has_velocity_limits;
+    config.angular_z_min_velocity = limiter_ang_.min_velocity;
+    config.angular_z_max_velocity = limiter_ang_.max_velocity;
+    config.angular_z_has_acceleration_limits = limiter_ang_.has_acceleration_limits;
+    config.angular_z_min_acceleration = limiter_ang_.min_acceleration;
+    config.angular_z_max_acceleration = limiter_ang_.max_acceleration;
+    config.angular_z_has_jerk_limits = limiter_ang_.has_jerk_limits;
+    config.angular_z_min_jerk = limiter_ang_.min_jerk;
+    config.angular_z_max_jerk = limiter_ang_.max_jerk;
 
     dyn_reconf_server_ = std::make_shared<ReconfigureServer>(dyn_reconf_server_mutex_, controller_nh);
 
@@ -744,6 +815,26 @@ namespace diff_drive_controller{
 
     dynamic_params.enable_odom_tf = config.enable_odom_tf;
 
+    dynamic_params.linear_x_has_velocity_limits = config.linear_x_has_velocity_limits;
+    dynamic_params.linear_x_min_velocity = config.linear_x_min_velocity;
+    dynamic_params.linear_x_max_velocity = config.linear_x_max_velocity;
+    dynamic_params.linear_x_has_acceleration_limits = config.linear_x_has_acceleration_limits;
+    dynamic_params.linear_x_min_acceleration = config.linear_x_min_acceleration;
+    dynamic_params.linear_x_max_acceleration = config.linear_x_max_acceleration;
+    dynamic_params.linear_x_has_jerk_limits = config.linear_x_has_jerk_limits;
+    dynamic_params.linear_x_min_jerk = config.linear_x_min_jerk;
+    dynamic_params.linear_x_max_jerk = config.linear_x_max_jerk;
+
+    dynamic_params.angular_z_has_velocity_limits = config.angular_z_has_velocity_limits;
+    dynamic_params.angular_z_min_velocity = config.angular_z_min_velocity;
+    dynamic_params.angular_z_max_velocity = config.angular_z_max_velocity;
+    dynamic_params.angular_z_has_acceleration_limits = config.angular_z_has_acceleration_limits;
+    dynamic_params.angular_z_min_acceleration = config.angular_z_min_acceleration;
+    dynamic_params.angular_z_max_acceleration = config.angular_z_max_acceleration;
+    dynamic_params.angular_z_has_jerk_limits = config.angular_z_has_jerk_limits;
+    dynamic_params.angular_z_min_jerk = config.angular_z_min_jerk;
+    dynamic_params.angular_z_max_jerk = config.angular_z_max_jerk;
+
     dynamic_params_.writeFromNonRT(dynamic_params);
 
     ROS_INFO_STREAM_NAMED(name_, "Dynamic Reconfigure:\n" << dynamic_params);
@@ -757,6 +848,26 @@ namespace diff_drive_controller{
     left_wheel_radius_multiplier_  = dynamic_params.left_wheel_radius_multiplier;
     right_wheel_radius_multiplier_ = dynamic_params.right_wheel_radius_multiplier;
     wheel_separation_multiplier_   = dynamic_params.wheel_separation_multiplier;
+
+    limiter_lin_.has_velocity_limits = dynamic_params.linear_x_has_velocity_limits;
+    limiter_lin_.max_velocity = dynamic_params.linear_x_max_velocity;
+    limiter_lin_.min_velocity = dynamic_params.linear_x_min_velocity;
+    limiter_lin_.has_acceleration_limits = dynamic_params.linear_x_has_acceleration_limits;
+    limiter_lin_.max_acceleration = dynamic_params.linear_x_max_acceleration;
+    limiter_lin_.min_acceleration = dynamic_params.linear_x_min_acceleration;
+    limiter_lin_.has_jerk_limits = dynamic_params.linear_x_has_jerk_limits;
+    limiter_lin_.max_jerk = dynamic_params.linear_x_max_jerk;
+    limiter_lin_.min_jerk = dynamic_params.linear_x_min_jerk;
+
+    limiter_ang_.has_velocity_limits = dynamic_params.angular_z_has_velocity_limits;
+    limiter_ang_.max_velocity = dynamic_params.angular_z_max_velocity;
+    limiter_ang_.min_velocity = dynamic_params.angular_z_min_velocity;
+    limiter_ang_.has_acceleration_limits = dynamic_params.angular_z_has_acceleration_limits;
+    limiter_ang_.max_acceleration = dynamic_params.angular_z_max_acceleration;
+    limiter_ang_.min_acceleration = dynamic_params.angular_z_min_acceleration;
+    limiter_ang_.has_jerk_limits = dynamic_params.angular_z_has_jerk_limits;
+    limiter_ang_.max_jerk = dynamic_params.angular_z_max_jerk;
+    limiter_ang_.min_jerk = dynamic_params.angular_z_min_jerk;
 
     publish_period_ = ros::Duration(1.0 / dynamic_params.publish_rate);
     enable_odom_tf_ = dynamic_params.enable_odom_tf;
