@@ -60,7 +60,7 @@ bool JointPositionController::init(hardware_interface::EffortJointInterface *rob
   std::string joint_name;
   if (!n.getParam("joint", joint_name))
   {
-    ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
+    ROS_WARN("No joint given (namespace: %s)", n.getNamespace().c_str());
     return false;
   }
 
@@ -82,13 +82,13 @@ bool JointPositionController::init(hardware_interface::EffortJointInterface *rob
   urdf::Model urdf;
   if (!urdf.initParamWithNodeHandle("robot_description", n))
   {
-    ROS_ERROR("Failed to parse urdf file");
+    ROS_WARN("Failed to parse urdf file");
     return false;
   }
   joint_urdf_ = urdf.getJoint(joint_name);
   if (!joint_urdf_)
   {
-    ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
+    ROS_WARN("Could not find joint '%s' in urdf", joint_name.c_str());
     return false;
   }
 

@@ -140,16 +140,16 @@ inline bool checkStateTolerance(const State&                                    
     {
       if( show_errors )
       {
-        ROS_ERROR_STREAM_NAMED("tolerances","Path state tolerances failed on joint " << i);
+        ROS_WARN_STREAM_NAMED("tolerances","Path state tolerances failed on joint " << i);
 
         if (tol.position     > 0.0 && abs(state_error.position[i])     > tol.position)
-          ROS_ERROR_STREAM_NAMED("tolerances","Position Error: " << state_error.position[i] <<
+          ROS_WARN_STREAM_NAMED("tolerances","Position Error: " << state_error.position[i] <<
             " Position Tolerance: " << tol.position);
         if (tol.velocity     > 0.0 && abs(state_error.velocity[i])     > tol.velocity)
-          ROS_ERROR_STREAM_NAMED("tolerances","Velocity Error: " << state_error.velocity[i] <<
+          ROS_WARN_STREAM_NAMED("tolerances","Velocity Error: " << state_error.velocity[i] <<
             " Velocity Tolerance: " << tol.velocity);
         if (tol.acceleration > 0.0 && abs(state_error.acceleration[i]) > tol.acceleration)
-          ROS_ERROR_STREAM_NAMED("tolerances","Acceleration Error: " << state_error.acceleration[i] <<
+          ROS_WARN_STREAM_NAMED("tolerances","Acceleration Error: " << state_error.acceleration[i] <<
             " Acceleration Tolerance: " << tol.acceleration);
       }
       return false;
@@ -180,16 +180,16 @@ inline bool checkStateTolerancePerJoint(const State&                            
   {
     if( show_errors )
     {
-      ROS_ERROR_STREAM_NAMED("tolerances","Path state tolerances failed:");
+      ROS_WARN_STREAM_NAMED("tolerances","Path state tolerances failed:");
 
       if (state_tolerance.position     > 0.0 && abs(state_error.position[0])     > state_tolerance.position)
-        ROS_ERROR_STREAM_NAMED("tolerances","Position Error: " << state_error.position[0] <<
+        ROS_WARN_STREAM_NAMED("tolerances","Position Error: " << state_error.position[0] <<
           " Position Tolerance: " << state_tolerance.position);
       if (state_tolerance.velocity     > 0.0 && abs(state_error.velocity[0])     > state_tolerance.velocity)
-        ROS_ERROR_STREAM_NAMED("tolerances","Velocity Error: " << state_error.velocity[0] <<
+        ROS_WARN_STREAM_NAMED("tolerances","Velocity Error: " << state_error.velocity[0] <<
           " Velocity Tolerance: " << state_tolerance.velocity);
       if (state_tolerance.acceleration > 0.0 && abs(state_error.acceleration[0]) > state_tolerance.acceleration)
-        ROS_ERROR_STREAM_NAMED("tolerances","Acceleration Error: " << state_error.acceleration[0] <<
+        ROS_WARN_STREAM_NAMED("tolerances","Acceleration Error: " << state_error.acceleration[0] <<
           " Acceleration Tolerance: " << state_tolerance.acceleration);
     }
     return false;

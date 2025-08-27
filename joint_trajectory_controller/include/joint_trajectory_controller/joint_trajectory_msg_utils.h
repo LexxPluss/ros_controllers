@@ -104,7 +104,7 @@ inline bool isValid(const trajectory_msgs::JointTrajectory& msg)
 
     if(!isValid(*it, joint_dim))
     {
-      ROS_ERROR_STREAM("Invalid trajectory point at index: " << index <<
+      ROS_WARN_STREAM("Invalid trajectory point at index: " << index <<
                        ". Size mismatch in joint names, position, velocity or acceleration data.");
       return false;
     }

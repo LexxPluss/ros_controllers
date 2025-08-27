@@ -233,7 +233,7 @@ Trajectory initJointTrajectory(const trajectory_msgs::JointTrajectory&       msg
   if (!isTimeStrictlyIncreasing(msg))
   {
     error_string = "Trajectory message contains waypoints that are not strictly increasing in time.";
-    ROS_ERROR_STREAM(error_string);
+    ROS_WARN_STREAM(error_string);
     options.setErrorString(error_string);
     return Trajectory();
   }
@@ -279,7 +279,7 @@ Trajectory initJointTrajectory(const trajectory_msgs::JointTrajectory&       msg
     {
       error_string = "Cannot create trajectory from message. "
                 "Vector specifying whether joints wrap around has an invalid size.";
-      ROS_ERROR_STREAM(error_string);
+      ROS_WARN_STREAM(error_string);
       options.setErrorString(error_string);
       return Trajectory();
     }
@@ -291,7 +291,7 @@ Trajectory initJointTrajectory(const trajectory_msgs::JointTrajectory&       msg
     if (msg.joint_names.size() != joint_names.size())
     {
       error_string = "Cannot create trajectory from message. It does not contain the expected joints.";
-      ROS_ERROR_STREAM(error_string);
+      ROS_WARN_STREAM(error_string);
       options.setErrorString(error_string);
       return Trajectory();
     }
@@ -304,7 +304,7 @@ Trajectory initJointTrajectory(const trajectory_msgs::JointTrajectory&       msg
   if (mapping_vector.empty())
   {
     error_string = "Cannot create trajectory from message. It does not contain the expected joints.";
-    ROS_ERROR_STREAM(error_string);
+    ROS_WARN_STREAM(error_string);
     options.setErrorString(error_string);
     return Trajectory();
   }
@@ -446,7 +446,7 @@ Trajectory initJointTrajectory(const trajectory_msgs::JointTrajectory&       msg
         if (first == curr_joint_traj.end() || last == curr_joint_traj.end())
         {
           error_string = "Unexpected error: Could not find segments in current trajectory. Please contact the package maintainer.";
-          ROS_ERROR_STREAM(error_string);
+          ROS_WARN_STREAM(error_string);
           options.setErrorString(error_string);
           return Trajectory();
         }

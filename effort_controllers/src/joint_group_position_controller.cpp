@@ -64,13 +64,13 @@ namespace effort_controllers
     std::string param_name = "joints";
     if(!n.getParam(param_name, joint_names_))
     {
-      ROS_ERROR_STREAM("Failed to getParam '" << param_name << "' (namespace: " << n.getNamespace() << ").");
+      ROS_WARN_STREAM("Failed to getParam '" << param_name << "' (namespace: " << n.getNamespace() << ").");
       return false;
     }
     n_joints_ = joint_names_.size();
 
     if(n_joints_ == 0){
-      ROS_ERROR_STREAM("List of joint names is empty.");
+      ROS_WARN_STREAM("List of joint names is empty.");
       return false;
     }
 
@@ -78,7 +78,7 @@ namespace effort_controllers
     urdf::Model urdf;
     if (!urdf.initParamWithNodeHandle("robot_description", n))
     {
-      ROS_ERROR("Failed to parse urdf file");
+      ROS_WARN("Failed to parse urdf file");
       return false;
     }
 
@@ -94,14 +94,14 @@ namespace effort_controllers
       }
       catch (const hardware_interface::HardwareInterfaceException& e)
       {
-        ROS_ERROR_STREAM("Exception thrown: " << e.what());
+        ROS_WARN_STREAM("Exception thrown: " << e.what());
         return false;
       }
 
       urdf::JointConstSharedPtr joint_urdf = urdf.getJoint(joint_name);
       if (!joint_urdf)
       {
-        ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
+        ROS_WARN("Could not find joint '%s' in urdf", joint_name.c_str());
         return false;
       }
       joint_urdfs_.push_back(joint_urdf);
@@ -109,7 +109,7 @@ namespace effort_controllers
       // Load PID Controller using gains set on parameter server
       if (!pid_controllers_[i].init(ros::NodeHandle(n, joint_name + "/pid")))
       {
-        ROS_ERROR_STREAM("Failed to load PID parameters from " << joint_name + "/pid");
+        ROS_WARN_STREAM("Failed to load PID parameters from " << joint_name + "/pid");
         return false;
       }
     }
@@ -178,7 +178,7 @@ namespace effort_controllers
   {
     if(msg->data.size()!=n_joints_)
     {
-      ROS_ERROR_STREAM("Dimension of command (" << msg->data.size() << ") does not match number of joints (" << n_joints_ << ")! Not executing!");
+      ROS_WARN_STREAM("Dimension of command (" << msg->data.size() << ") does not match number of joints (" << n_joints_ << ")! Not executing!");
       return;
     }
     commands_buffer_.writeFromNonRT(msg->data);

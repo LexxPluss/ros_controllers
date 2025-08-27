@@ -73,14 +73,14 @@ namespace four_wheel_steering_controller{
 
     if (front_wheel_names.size() != rear_wheel_names.size())
     {
-      ROS_ERROR_STREAM_NAMED(name_,
+      ROS_WARN_STREAM_NAMED(name_,
           "#front wheels (" << front_wheel_names.size() << ") != " <<
           "#rear wheels (" << rear_wheel_names.size() << ").");
       return false;
     }
     else if (front_wheel_names.size() != 2)
     {
-      ROS_ERROR_STREAM_NAMED(name_,
+      ROS_WARN_STREAM_NAMED(name_,
           "#two wheels by axle (left and right) is needed; now : "<<front_wheel_names.size()<<" .");
       return false;
     }
@@ -100,14 +100,14 @@ namespace four_wheel_steering_controller{
 
     if (front_steering_names.size() != rear_steering_names.size())
     {
-      ROS_ERROR_STREAM_NAMED(name_,
+      ROS_WARN_STREAM_NAMED(name_,
           "#left steerings (" << front_steering_names.size() << ") != " <<
           "#right steerings (" << rear_steering_names.size() << ").");
       return false;
     }
     else if (front_steering_names.size() != 2)
     {
-      ROS_ERROR_STREAM_NAMED(name_,
+      ROS_WARN_STREAM_NAMED(name_,
           "#two steering by axle (left and right) is needed; now : "<<front_steering_names.size()<<" .");
       return false;
     }
@@ -536,7 +536,7 @@ namespace four_wheel_steering_controller{
     }
     else
     {
-      ROS_ERROR_NAMED(name_, "Can't accept new commands. Controller is not running.");
+      ROS_WARN_NAMED(name_, "Can't accept new commands. Controller is not running.");
     }
   }
 
@@ -564,7 +564,7 @@ namespace four_wheel_steering_controller{
     }
     else
     {
-      ROS_ERROR_NAMED(name_, "Can't accept new commands. Controller is not running.");
+      ROS_WARN_NAMED(name_, "Can't accept new commands. Controller is not running.");
     }
   }
 
@@ -575,7 +575,7 @@ namespace four_wheel_steering_controller{
       XmlRpc::XmlRpcValue wheel_list;
       if (!controller_nh.getParam(wheel_param, wheel_list))
       {
-        ROS_ERROR_STREAM_NAMED(name_,
+        ROS_WARN_STREAM_NAMED(name_,
             "Couldn't retrieve wheel param '" << wheel_param << "'.");
         return false;
       }
@@ -584,7 +584,7 @@ namespace four_wheel_steering_controller{
       {
         if (wheel_list.size() == 0)
         {
-          ROS_ERROR_STREAM_NAMED(name_,
+          ROS_WARN_STREAM_NAMED(name_,
               "Wheel param '" << wheel_param << "' is an empty list");
           return false;
         }
@@ -593,7 +593,7 @@ namespace four_wheel_steering_controller{
         {
           if (wheel_list[i].getType() != XmlRpc::XmlRpcValue::TypeString)
           {
-            ROS_ERROR_STREAM_NAMED(name_,
+            ROS_WARN_STREAM_NAMED(name_,
                 "Wheel param '" << wheel_param << "' #" << i <<
                 " isn't a string.");
             return false;
@@ -613,7 +613,7 @@ namespace four_wheel_steering_controller{
       }
       else
       {
-        ROS_ERROR_STREAM_NAMED(name_,
+        ROS_WARN_STREAM_NAMED(name_,
             "Wheel param '" << wheel_param <<
             "' is neither a list of strings nor a string.");
         return false;

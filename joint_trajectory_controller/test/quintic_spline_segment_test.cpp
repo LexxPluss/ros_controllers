@@ -90,7 +90,7 @@ TEST(QuinticSplineSegmentTest, InvalidSegmentConstruction)
     EXPECT_THROW(Segment(start_time, valid_state, valid_end_time, empty_state), std::invalid_argument);
     EXPECT_THROW(Segment(start_time, empty_state, valid_end_time, empty_state), std::invalid_argument);
     try{Segment(start_time, empty_state, valid_end_time, empty_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Start/end state size mismatch
@@ -100,7 +100,7 @@ TEST(QuinticSplineSegmentTest, InvalidSegmentConstruction)
     EXPECT_THROW(Segment(start_time, valid_state,    valid_end_time, bad_size_state), std::invalid_argument);
     EXPECT_THROW(Segment(start_time, bad_size_state, valid_end_time, valid_state),   std::invalid_argument);
     try{Segment(start_time, bad_size_state, valid_end_time, valid_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Start/end state velocity size mismatch
@@ -110,9 +110,9 @@ TEST(QuinticSplineSegmentTest, InvalidSegmentConstruction)
     EXPECT_THROW(Segment(start_time, bad_vel_state, valid_end_time, valid_state),    std::invalid_argument);
     EXPECT_THROW(Segment(start_time, valid_state,    valid_end_time, bad_vel_state), std::invalid_argument);
     try{Segment(start_time, bad_vel_state, valid_end_time, valid_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
     try{Segment(start_time, valid_state, valid_end_time, bad_vel_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Start/end state acceleration size mismatch
@@ -122,9 +122,9 @@ TEST(QuinticSplineSegmentTest, InvalidSegmentConstruction)
     EXPECT_THROW(Segment(start_time, bad_acc_state, valid_end_time, valid_state),   std::invalid_argument);
     EXPECT_THROW(Segment(start_time, valid_state,   valid_end_time, bad_acc_state), std::invalid_argument);
     try{Segment(start_time, bad_acc_state, valid_end_time, valid_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
     try{Segment(start_time, valid_state, valid_end_time, bad_acc_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Invalid duration triggers an exception
@@ -132,7 +132,7 @@ TEST(QuinticSplineSegmentTest, InvalidSegmentConstruction)
     const Time invalid_end_time = -1.0;
     EXPECT_THROW(Segment(start_time, valid_state, invalid_end_time, valid_state), std::invalid_argument);
     try{Segment(start_time, valid_state, invalid_end_time, valid_state);}
-    catch(const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch(const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 }
 

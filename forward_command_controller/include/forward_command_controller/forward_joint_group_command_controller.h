@@ -81,13 +81,13 @@ public:
     std::string param_name = "joints";
     if(!n.getParam(param_name, joint_names_))
     {
-      ROS_ERROR_STREAM("Failed to getParam '" << param_name << "' (namespace: " << n.getNamespace() << ").");
+      ROS_WARN_STREAM("Failed to getParam '" << param_name << "' (namespace: " << n.getNamespace() << ").");
       return false;
     }
     n_joints_ = joint_names_.size();
 
     if(n_joints_ == 0){
-      ROS_ERROR_STREAM("List of joint names is empty.");
+      ROS_WARN_STREAM("List of joint names is empty.");
       return false;
     }
     for(unsigned int i=0; i<n_joints_; i++)
@@ -98,7 +98,7 @@ public:
       }
       catch (const hardware_interface::HardwareInterfaceException& e)
       {
-        ROS_ERROR_STREAM("Exception thrown: " << e.what());
+        ROS_WARN_STREAM("Exception thrown: " << e.what());
         return false;
       }
     }
@@ -128,7 +128,7 @@ private:
   {
     if(msg->data.size()!=n_joints_)
     {
-      ROS_ERROR_STREAM("Dimension of command (" << msg->data.size() << ") does not match number of joints (" << n_joints_ << ")! Not executing!");
+      ROS_WARN_STREAM("Dimension of command (" << msg->data.size() << ") does not match number of joints (" << n_joints_ << ")! Not executing!");
       return;
     }
     commands_buffer_.writeFromNonRT(msg->data);

@@ -64,7 +64,7 @@ bool JointVelocityController::init(hardware_interface::EffortJointInterface *rob
   // Get joint name from parameter server
   std::string joint_name;
   if (!n.getParam("joint", joint_name)) {
-    ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
+    ROS_WARN("No joint given (namespace: %s)", n.getNamespace().c_str());
     return false;
   }
 

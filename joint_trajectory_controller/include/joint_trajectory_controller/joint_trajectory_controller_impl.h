@@ -51,12 +51,12 @@ std::vector<std::string> getStrings(const ros::NodeHandle& nh, const std::string
   XmlRpcValue xml_array;
   if (!nh.getParam(param_name, xml_array))
   {
-    ROS_ERROR_STREAM("Could not find '" << param_name << "' parameter (namespace: " << nh.getNamespace() << ").");
+    ROS_WARN_STREAM("Could not find '" << param_name << "' parameter (namespace: " << nh.getNamespace() << ").");
     return std::vector<std::string>();
   }
   if (xml_array.getType() != XmlRpcValue::TypeArray)
   {
-    ROS_ERROR_STREAM("The '" << param_name << "' parameter is not an array (namespace: " <<
+    ROS_WARN_STREAM("The '" << param_name << "' parameter is not an array (namespace: " <<
                      nh.getNamespace() << ").");
     return std::vector<std::string>();
   }
@@ -67,7 +67,7 @@ std::vector<std::string> getStrings(const ros::NodeHandle& nh, const std::string
     XmlRpc::XmlRpcValue& elem = xml_array[i];
     if (elem.getType() != XmlRpcValue::TypeString)
     {
-      ROS_ERROR_STREAM("The '" << param_name << "' parameter contains a non-string element (namespace: " <<
+      ROS_WARN_STREAM("The '" << param_name << "' parameter contains a non-string element (namespace: " <<
                        nh.getNamespace() << ").");
       return std::vector<std::string>();
     }
@@ -86,7 +86,7 @@ urdf::ModelSharedPtr getUrdf(const ros::NodeHandle& nh, const std::string& param
   {
     if (!urdf->initString(urdf_str))
     {
-      ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter (namespace: " <<
+      ROS_WARN_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter (namespace: " <<
         nh.getNamespace() << ").");
       return urdf::ModelSharedPtr();
     }
@@ -94,7 +94,7 @@ urdf::ModelSharedPtr getUrdf(const ros::NodeHandle& nh, const std::string& param
   // Check for robot_description in root
   else if (!urdf->initParam("robot_description"))
   {
-    ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter");
+    ROS_WARN_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter");
     return urdf::ModelSharedPtr();
   }
   return urdf;
@@ -112,7 +112,7 @@ std::vector<urdf::JointConstSharedPtr> getUrdfJoints(const urdf::Model& urdf, co
     }
     else
     {
-      ROS_ERROR_STREAM("Could not find joint '" << joint_name << "' in URDF model.");
+      ROS_WARN_STREAM("Could not find joint '" << joint_name << "' in URDF model.");
       return std::vector<urdf::JointConstSharedPtr>();
     }
   }
@@ -260,7 +260,7 @@ bool JointTrajectoryController<SegmentImpl, HardwareInterface>::init(HardwareInt
     try {joints_[i] = hw->getHandle(joint_names_[i]);}
     catch (...)
     {
-      ROS_ERROR_STREAM_NAMED(name_, "Could not find joint '" << joint_names_[i] << "' in '" <<
+      ROS_WARN_STREAM_NAMED(name_, "Could not find joint '" << joint_names_[i] << "' in '" <<
                                     this->getHardwareInterfaceType() << "'.");
       return false;
     }
@@ -377,7 +377,7 @@ update(const ros::Time& time, const ros::Duration& period)
     if (curr_traj[i].end() == segment_it)
     {
       // Non-realtime safe, but should never happen under normal operation
-      ROS_ERROR_NAMED(name_,
+      ROS_WARN_NAMED(name_,
                       "Unexpected error: No trajectory defined at current time. Please contact the package maintainer.");
       return;
     }
@@ -400,7 +400,7 @@ update(const ros::Time& time, const ros::Duration& period)
         {
           if (verbose_)
           {
-            ROS_ERROR_STREAM_NAMED(name_,"Path tolerances failed for joint: " << joint_names_[i]);
+            ROS_WARN_STREAM_NAMED(name_,"Path tolerances failed for joint: " << joint_names_[i]);
             checkStateTolerancePerJoint(state_joint_error_, joint_tolerances.state_tolerance, true);
           }
           rt_segment_goal->preallocated_result_->error_code =
@@ -437,7 +437,7 @@ update(const ros::Time& time, const ros::Duration& period)
         {
           if (verbose_)
           {
-            ROS_ERROR_STREAM_NAMED(name_,"Goal tolerances failed for joint: "<< joint_names_[i]);
+            ROS_WARN_STREAM_NAMED(name_,"Goal tolerances failed for joint: "<< joint_names_[i]);
             // Check the tolerances one more time to output the errors that occurs
             checkStateTolerancePerJoint(state_joint_error_, tolerances.goal_state_tolerance, true);
           }
@@ -489,7 +489,7 @@ updateTrajectoryCommand(const JointTrajectoryConstPtr& msg, RealtimeGoalHandlePt
   if (!this->isRunning())
   {
     error_string_tmp = "Can't accept new commands. Controller is not running.";
-    ROS_ERROR_STREAM_NAMED(name_, error_string_tmp);
+    ROS_WARN_STREAM_NAMED(name_, error_string_tmp);
     options.setErrorString(error_string_tmp);
     return false;
   }
@@ -547,14 +547,14 @@ updateTrajectoryCommand(const JointTrajectoryConstPtr& msg, RealtimeGoalHandlePt
   }
   catch(const std::exception& ex)
   {
-    ROS_ERROR_STREAM_NAMED(name_, ex.what());
+    ROS_WARN_STREAM_NAMED(name_, ex.what());
     options.setErrorString(ex.what());
     return false;
   }
   catch(...)
   {
     error_string_tmp = "Unexpected exception caught when initializing trajectory from ROS message data.";
-    ROS_ERROR_STREAM_NAMED(name_, error_string_tmp);
+    ROS_WARN_STREAM_NAMED(name_, error_string_tmp);
     options.setErrorString(error_string_tmp);
     return false;
   }
@@ -571,7 +571,7 @@ goalCB(GoalHandle gh)
   // Precondition: Running controller
   if (!this->isRunning())
   {
-    ROS_ERROR_NAMED(name_, "Can't accept new action goals. Controller is not running.");
+    ROS_WARN_NAMED(name_, "Can't accept new action goals. Controller is not running.");
     control_msgs::FollowJointTrajectoryResult result;
     result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL; // TODO: Add better error status to msg?
     gh.setRejected(result);
@@ -583,7 +583,7 @@ goalCB(GoalHandle gh)
   {
     if (gh.getGoal()->trajectory.joint_names.size() != joint_names_.size())
     {
-      ROS_ERROR_NAMED(name_, "Joints on incoming goal don't match the controller joints.");
+      ROS_WARN_NAMED(name_, "Joints on incoming goal don't match the controller joints.");
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
       gh.setRejected(result);
@@ -597,7 +597,7 @@ goalCB(GoalHandle gh)
 
   if (mapping_vector.empty())
   {
-    ROS_ERROR_NAMED(name_, "Joints on incoming goal don't match the controller joints.");
+    ROS_WARN_NAMED(name_, "Joints on incoming goal don't match the controller joints.");
     control_msgs::FollowJointTrajectoryResult result;
     result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
     gh.setRejected(result);
@@ -667,7 +667,7 @@ queryStateService(control_msgs::QueryTrajectoryState::Request&  req,
   // Preconditions
   if (!this->isRunning())
   {
-    ROS_ERROR_NAMED(name_, "Can't sample trajectory. Controller is not running.");
+    ROS_WARN_NAMED(name_, "Can't sample trajectory. Controller is not running.");
     return false;
   }
 
@@ -689,7 +689,7 @@ queryStateService(control_msgs::QueryTrajectoryState::Request&  req,
     typename TrajectoryPerJoint::const_iterator segment_it = sample(curr_traj[i], sample_time.toSec(), state);
     if (curr_traj[i].end() == segment_it)
     {
-      ROS_ERROR_STREAM_NAMED(name_, "Requested sample time precedes trajectory start time.");
+      ROS_WARN_STREAM_NAMED(name_, "Requested sample time precedes trajectory start time.");
       return false;
     }
 

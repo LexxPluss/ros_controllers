@@ -46,7 +46,7 @@ namespace force_torque_sensor_controller
 
     // get publishing period
     if (!controller_nh.getParam("publish_rate", publish_rate_)){
-      ROS_ERROR("Parameter 'publish_rate' not set");
+      ROS_WARN("Parameter 'publish_rate' not set");
       return false;
     }
 

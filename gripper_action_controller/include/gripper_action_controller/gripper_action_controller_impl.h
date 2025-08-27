@@ -53,7 +53,7 @@ urdf::ModelSharedPtr getUrdf(const ros::NodeHandle& nh, const std::string& param
   {
     if (!urdf->initString(urdf_str))
     {
-      ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter (namespace: " <<
+      ROS_WARN_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter (namespace: " <<
         nh.getNamespace() << ").");
       return urdf::ModelSharedPtr();
     }
@@ -61,7 +61,7 @@ urdf::ModelSharedPtr getUrdf(const ros::NodeHandle& nh, const std::string& param
   // Check for robot_description in root
   else if (!urdf->initParam("robot_description"))
   {
-    ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter");
+    ROS_WARN_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter");
     return urdf::ModelSharedPtr();
   }
   return urdf;
@@ -79,7 +79,7 @@ std::vector<urdf::JointConstSharedPtr> getUrdfJoints(const urdf::Model& urdf, co
     }
     else
     {
-      ROS_ERROR_STREAM("Could not find joint '" << joint_name << "' in URDF model.");
+      ROS_WARN_STREAM("Could not find joint '" << joint_name << "' in URDF model.");
       return std::vector<urdf::JointConstSharedPtr>();
     }
   }
@@ -153,7 +153,7 @@ bool GripperActionController<HardwareInterface>::init(HardwareInterface* hw,
   controller_nh_.getParam("joint", joint_name_);
   if (joint_name_.empty())
   {
-    ROS_ERROR_STREAM_NAMED(name_, "Could not find joint name on param server");
+    ROS_WARN_STREAM_NAMED(name_, "Could not find joint name on param server");
     return false;
   }
 
@@ -180,7 +180,7 @@ bool GripperActionController<HardwareInterface>::init(HardwareInterface* hw,
   }
   catch (...)
   {
-    ROS_ERROR_STREAM_NAMED(name_, "Could not find joint '" << joint_name_ << "' in '" <<
+    ROS_WARN_STREAM_NAMED(name_, "Could not find joint '" << joint_name_ << "' in '" <<
 			   this->getHardwareInterfaceType() << "'.");
     return false;
   }
@@ -249,7 +249,7 @@ goalCB(GoalHandle gh)
   // Precondition: Running controller
   if (!this->isRunning())
   {
-    ROS_ERROR_NAMED(name_, "Can't accept new action goals. Controller is not running.");
+    ROS_WARN_NAMED(name_, "Can't accept new action goals. Controller is not running.");
     control_msgs::GripperCommandResult result;
     gh.setRejected(result);
     return;

@@ -76,7 +76,7 @@ public:
     std::string joint_name;
     if (!n.getParam("joint", joint_name))
     {
-      ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
+      ROS_WARN("No joint given (namespace: %s)", n.getNamespace().c_str());
       return false;
     }
     joint_ = hw->getHandle(joint_name);

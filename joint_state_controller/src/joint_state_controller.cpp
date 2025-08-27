@@ -62,7 +62,7 @@ namespace joint_state_controller
 
     // get publishing period
     if (!controller_nh.getParam("publish_rate", publish_rate_)){
-      ROS_ERROR("Parameter 'publish_rate' not set");
+      ROS_WARN("Parameter 'publish_rate' not set");
       return false;
     }
 
@@ -139,7 +139,7 @@ namespace joint_state_controller
 
     if (list.getType() != XmlRpc::XmlRpcValue::TypeArray)
     {
-      ROS_ERROR("Extra joints specification is not an array. Ignoring.");
+      ROS_WARN("Extra joints specification is not an array. Ignoring.");
       return;
     }
     for(std::size_t i = 0; i < list.size(); ++i)
@@ -148,14 +148,14 @@ namespace joint_state_controller
 
       if (elem.getType() != XmlRpc::XmlRpcValue::TypeStruct)
       {
-        ROS_ERROR_STREAM("Extra joint specification is not a struct, but rather '" << elem.getType() <<
+        ROS_WARN_STREAM("Extra joint specification is not a struct, but rather '" << elem.getType() <<
                          "'. Ignoring.");
         continue;
       }
 
       if (!elem.hasMember("name"))
       {
-        ROS_ERROR_STREAM("Extra joint does not specify name. Ignoring.");
+        ROS_WARN_STREAM("Extra joint does not specify name. Ignoring.");
         continue;
       }
 
@@ -173,17 +173,17 @@ namespace joint_state_controller
       const XmlRpc::XmlRpcValue::Type typeDouble = XmlRpc::XmlRpcValue::TypeDouble;
       if (has_pos && elem["position"].getType() != typeDouble)
       {
-        ROS_ERROR_STREAM("Extra joint '" << name << "' does not specify a valid default position. Ignoring.");
+        ROS_WARN_STREAM("Extra joint '" << name << "' does not specify a valid default position. Ignoring.");
         continue;
       }
       if (has_vel && elem["velocity"].getType() != typeDouble)
       {
-        ROS_ERROR_STREAM("Extra joint '" << name << "' does not specify a valid default velocity. Ignoring.");
+        ROS_WARN_STREAM("Extra joint '" << name << "' does not specify a valid default velocity. Ignoring.");
         continue;
       }
       if (has_eff && elem["effort"].getType() != typeDouble)
       {
-        ROS_ERROR_STREAM("Extra joint '" << name << "' does not specify a valid default effort. Ignoring.");
+        ROS_WARN_STREAM("Extra joint '" << name << "' does not specify a valid default effort. Ignoring.");
         continue;
       }
 

@@ -215,7 +215,7 @@ TEST_F(JointTrajectorySegmentTest, InvalidSegmentConstruction)
     JointTrajectoryPoint p_start_bad;
     EXPECT_THROW(Segment(traj_start_time, p_start_bad, p_end), std::invalid_argument);
     try {Segment(traj_start_time, JointTrajectoryPoint(), p_end);}
-    catch (const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch (const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Start/end data size mismatch
@@ -224,7 +224,7 @@ TEST_F(JointTrajectorySegmentTest, InvalidSegmentConstruction)
     p_start_bad.positions.push_back(0.0);
     EXPECT_THROW(Segment(traj_start_time, p_start_bad, p_end), std::invalid_argument);
     try {Segment(traj_start_time, p_start_bad, p_end);}
-    catch (const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch (const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Invalid start state
@@ -233,7 +233,7 @@ TEST_F(JointTrajectorySegmentTest, InvalidSegmentConstruction)
     p_start_bad.velocities.push_back(0.0);
     EXPECT_THROW(Segment(traj_start_time, p_start_bad, p_end), std::invalid_argument);
     try {Segment(traj_start_time, p_start_bad, p_end);}
-    catch (const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch (const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Invalid end state
@@ -242,7 +242,7 @@ TEST_F(JointTrajectorySegmentTest, InvalidSegmentConstruction)
     p_end_bad.velocities.push_back(0.0);
     EXPECT_THROW(Segment(traj_start_time, p_start, p_end_bad), std::invalid_argument);
     try {Segment(traj_start_time, p_start, p_end_bad);}
-    catch (const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch (const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 
   // Invalid joint wraparound specification
@@ -250,7 +250,7 @@ TEST_F(JointTrajectorySegmentTest, InvalidSegmentConstruction)
     std::vector<double> pos_offset(2);
     EXPECT_THROW(Segment(traj_start_time, p_start, p_end, pos_offset), std::invalid_argument);
     try {Segment(traj_start_time, p_start, p_end, pos_offset);}
-    catch (const std::invalid_argument& ex) {ROS_ERROR_STREAM(ex.what());}
+    catch (const std::invalid_argument& ex) {ROS_WARN_STREAM(ex.what());}
   }
 }
 
