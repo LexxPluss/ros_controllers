@@ -59,19 +59,19 @@ static bool hasCollisionGeometry(const urdf::LinkConstSharedPtr& link)
 {
   if (!link)
   {
-    ROS_WARN("Link pointer is null.");
+    ROS_ERROR("Link pointer is null.");
     return false;
   }
 
   if (!link->collision)
   {
-    ROS_WARN_STREAM("Link " << link->name << " does not have collision description. Add collision description for link to urdf.");
+    ROS_ERROR_STREAM("Link " << link->name << " does not have collision description. Add collision description for link to urdf.");
     return false;
   }
 
   if (!link->collision->geometry)
   {
-    ROS_WARN_STREAM("Link " << link->name << " does not have collision geometry description. Add collision geometry description for link to urdf.");
+    ROS_ERROR_STREAM("Link " << link->name << " does not have collision geometry description. Add collision geometry description for link to urdf.");
     return false;
   }
   return true;
@@ -138,7 +138,7 @@ static bool getWheelRadius(const urdf::LinkConstSharedPtr& wheel_link, double& w
     return true;
   }
 
-  ROS_WARN_STREAM("Wheel link " << wheel_link->name << " is NOT modeled as a cylinder or sphere!");
+  ROS_ERROR_STREAM("Wheel link " << wheel_link->name << " is NOT modeled as a cylinder or sphere!");
   return false;
 }
 
@@ -181,7 +181,7 @@ namespace diff_drive_controller{
 
     if (left_wheel_names.size() != right_wheel_names.size())
     {
-      ROS_WARN_STREAM_NAMED(name_,
+      ROS_ERROR_STREAM_NAMED(name_,
           "#left wheels (" << left_wheel_names.size() << ") != " <<
           "#right wheels (" << right_wheel_names.size() << ").");
       return false;
@@ -271,6 +271,37 @@ namespace diff_drive_controller{
     controller_nh.param("angular/z/min_acceleration"       , limiter_ang_.min_acceleration       , -limiter_ang_.max_acceleration      );
     controller_nh.param("angular/z/max_jerk"               , limiter_ang_.max_jerk               ,  limiter_ang_.max_jerk              );
     controller_nh.param("angular/z/min_jerk"               , limiter_ang_.min_jerk               , -limiter_ang_.max_jerk              );
+
+    auto clamp_max = [](const std::string& name, double& value)
+    {
+      if (value < 0.0)
+      {
+        ROS_FATAL_STREAM(name << " is less than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    auto clamp_min = [](const std::string& name, double& value)
+    {
+      if (value > 0.0) {
+        ROS_FATAL_STREAM(name << " is greater than 0.0 (" << value << "), clamped to 0.0");
+        value = 0.0;
+      }
+    };
+
+    clamp_max("limiter_lin_.max_velocity", limiter_lin_.max_velocity);
+    clamp_min("limiter_lin_.min_velocity", limiter_lin_.min_velocity);
+    clamp_max("limiter_lin_.max_acceleration", limiter_lin_.max_acceleration);
+    clamp_min("limiter_lin_.min_acceleration", limiter_lin_.min_acceleration);
+    clamp_max("limiter_lin_.max_jerk", limiter_lin_.max_jerk);
+    clamp_min("limiter_lin_.min_jerk", limiter_lin_.min_jerk);
+
+    clamp_max("limiter_ang_.max_velocity", limiter_ang_.max_velocity);
+    clamp_min("limiter_ang_.min_velocity", limiter_ang_.min_velocity);
+    clamp_max("limiter_ang_.max_acceleration", limiter_ang_.max_acceleration);
+    clamp_min("limiter_ang_.min_acceleration", limiter_ang_.min_acceleration);
+    clamp_max("limiter_ang_.max_jerk", limiter_ang_.max_jerk);
+    clamp_min("limiter_ang_.min_jerk", limiter_ang_.min_jerk);
 
     // Publish limited velocity:
     controller_nh.param("publish_cmd", publish_cmd_, publish_cmd_);
@@ -364,6 +395,26 @@ namespace diff_drive_controller{
     dynamic_params.publish_rate = publish_rate;
     dynamic_params.enable_odom_tf = enable_odom_tf_;
 
+    dynamic_params.linear_x_has_velocity_limits = limiter_lin_.has_velocity_limits;
+    dynamic_params.linear_x_min_velocity = limiter_lin_.min_velocity;
+    dynamic_params.linear_x_max_velocity = limiter_lin_.max_velocity;
+    dynamic_params.linear_x_has_acceleration_limits = limiter_lin_.has_acceleration_limits;
+    dynamic_params.linear_x_min_acceleration = limiter_lin_.min_acceleration;
+    dynamic_params.linear_x_max_acceleration = limiter_lin_.max_acceleration;
+    dynamic_params.linear_x_has_jerk_limits = limiter_lin_.has_jerk_limits;
+    dynamic_params.linear_x_min_jerk = limiter_lin_.min_jerk;
+    dynamic_params.linear_x_max_jerk = limiter_lin_.max_jerk;
+
+    dynamic_params.angular_z_has_velocity_limits = limiter_ang_.has_velocity_limits;
+    dynamic_params.angular_z_min_velocity = limiter_ang_.min_velocity;
+    dynamic_params.angular_z_max_velocity = limiter_ang_.max_velocity;
+    dynamic_params.angular_z_has_acceleration_limits = limiter_ang_.has_acceleration_limits;
+    dynamic_params.angular_z_min_acceleration = limiter_ang_.min_acceleration;
+    dynamic_params.angular_z_max_acceleration = limiter_ang_.max_acceleration;
+    dynamic_params.angular_z_has_jerk_limits = limiter_ang_.has_jerk_limits;
+    dynamic_params.angular_z_min_jerk = limiter_ang_.min_jerk;
+    dynamic_params.angular_z_max_jerk = limiter_ang_.max_jerk;
+
     dynamic_params_.writeFromNonRT(dynamic_params);
 
     // Initialize dynamic_reconfigure server
@@ -374,6 +425,26 @@ namespace diff_drive_controller{
 
     config.publish_rate = publish_rate;
     config.enable_odom_tf = enable_odom_tf_;
+
+    config.linear_x_has_velocity_limits = limiter_lin_.has_velocity_limits;
+    config.linear_x_min_velocity = limiter_lin_.min_velocity;
+    config.linear_x_max_velocity = limiter_lin_.max_velocity;
+    config.linear_x_has_acceleration_limits = limiter_lin_.has_acceleration_limits;
+    config.linear_x_min_acceleration = limiter_lin_.min_acceleration;
+    config.linear_x_max_acceleration = limiter_lin_.max_acceleration;
+    config.linear_x_has_jerk_limits = limiter_lin_.has_jerk_limits;
+    config.linear_x_min_jerk = limiter_lin_.min_jerk;
+    config.linear_x_max_jerk = limiter_lin_.max_jerk;
+
+    config.angular_z_has_velocity_limits = limiter_ang_.has_velocity_limits;
+    config.angular_z_min_velocity = limiter_ang_.min_velocity;
+    config.angular_z_max_velocity = limiter_ang_.max_velocity;
+    config.angular_z_has_acceleration_limits = limiter_ang_.has_acceleration_limits;
+    config.angular_z_min_acceleration = limiter_ang_.min_acceleration;
+    config.angular_z_max_acceleration = limiter_ang_.max_acceleration;
+    config.angular_z_has_jerk_limits = limiter_ang_.has_jerk_limits;
+    config.angular_z_min_jerk = limiter_ang_.min_jerk;
+    config.angular_z_max_jerk = limiter_ang_.max_jerk;
 
     dyn_reconf_server_ = std::make_shared<ReconfigureServer>(dyn_reconf_server_mutex_, controller_nh);
 
@@ -536,7 +607,7 @@ namespace diff_drive_controller{
       // check that we don't have multiple publishers on the command topic
       if (!allow_multiple_cmd_vel_publishers_ && sub_command_.getNumPublishers() > 1)
       {
-        ROS_WARN_STREAM_THROTTLE_NAMED(1.0, name_, "Detected " << sub_command_.getNumPublishers()
+        ROS_ERROR_STREAM_THROTTLE_NAMED(1.0, name_, "Detected " << sub_command_.getNumPublishers()
             << " publishers. Only 1 publisher is allowed. Going to brake.");
         brake();
         return;
@@ -560,7 +631,7 @@ namespace diff_drive_controller{
     }
     else
     {
-      ROS_WARN_NAMED(name_, "Can't accept new commands. Controller is not running.");
+      ROS_ERROR_NAMED(name_, "Can't accept new commands. Controller is not running.");
     }
   }
 
@@ -571,7 +642,7 @@ namespace diff_drive_controller{
       XmlRpc::XmlRpcValue wheel_list;
       if (!controller_nh.getParam(wheel_param, wheel_list))
       {
-        ROS_WARN_STREAM_NAMED(name_,
+        ROS_ERROR_STREAM_NAMED(name_,
             "Couldn't retrieve wheel param '" << wheel_param << "'.");
         return false;
       }
@@ -580,7 +651,7 @@ namespace diff_drive_controller{
       {
         if (wheel_list.size() == 0)
         {
-          ROS_WARN_STREAM_NAMED(name_,
+          ROS_ERROR_STREAM_NAMED(name_,
               "Wheel param '" << wheel_param << "' is an empty list");
           return false;
         }
@@ -589,7 +660,7 @@ namespace diff_drive_controller{
         {
           if (wheel_list[i].getType() != XmlRpc::XmlRpcValue::TypeString)
           {
-            ROS_WARN_STREAM_NAMED(name_,
+            ROS_ERROR_STREAM_NAMED(name_,
                 "Wheel param '" << wheel_param << "' #" << i <<
                 " isn't a string.");
             return false;
@@ -608,7 +679,7 @@ namespace diff_drive_controller{
       }
       else
       {
-        ROS_WARN_STREAM_NAMED(name_,
+        ROS_ERROR_STREAM_NAMED(name_,
             "Wheel param '" << wheel_param <<
             "' is neither a list of strings nor a string.");
         return false;
@@ -635,7 +706,7 @@ namespace diff_drive_controller{
     std::string robot_model_str="";
     if (!res || !root_nh.getParam(model_param_name,robot_model_str))
     {
-      ROS_WARN_NAMED(name_, "Robot description couldn't be retrieved from param server.");
+      ROS_ERROR_NAMED(name_, "Robot description couldn't be retrieved from param server.");
       return false;
     }
 
@@ -646,14 +717,14 @@ namespace diff_drive_controller{
 
     if (!left_wheel_joint)
     {
-      ROS_WARN_STREAM_NAMED(name_, left_wheel_name
+      ROS_ERROR_STREAM_NAMED(name_, left_wheel_name
                              << " couldn't be retrieved from model description");
       return false;
     }
 
     if (!right_wheel_joint)
     {
-      ROS_WARN_STREAM_NAMED(name_, right_wheel_name
+      ROS_ERROR_STREAM_NAMED(name_, right_wheel_name
                              << " couldn't be retrieved from model description");
       return false;
     }
@@ -678,7 +749,7 @@ namespace diff_drive_controller{
       // Get wheel radius
       if (!getWheelRadius(model->getLink(left_wheel_joint->child_link_name), wheel_radius_))
       {
-        ROS_WARN_STREAM_NAMED(name_, "Couldn't retrieve " << left_wheel_name << " wheel radius");
+        ROS_ERROR_STREAM_NAMED(name_, "Couldn't retrieve " << left_wheel_name << " wheel radius");
         return false;
       }
     }
@@ -744,6 +815,26 @@ namespace diff_drive_controller{
 
     dynamic_params.enable_odom_tf = config.enable_odom_tf;
 
+    dynamic_params.linear_x_has_velocity_limits = config.linear_x_has_velocity_limits;
+    dynamic_params.linear_x_min_velocity = config.linear_x_min_velocity;
+    dynamic_params.linear_x_max_velocity = config.linear_x_max_velocity;
+    dynamic_params.linear_x_has_acceleration_limits = config.linear_x_has_acceleration_limits;
+    dynamic_params.linear_x_min_acceleration = config.linear_x_min_acceleration;
+    dynamic_params.linear_x_max_acceleration = config.linear_x_max_acceleration;
+    dynamic_params.linear_x_has_jerk_limits = config.linear_x_has_jerk_limits;
+    dynamic_params.linear_x_min_jerk = config.linear_x_min_jerk;
+    dynamic_params.linear_x_max_jerk = config.linear_x_max_jerk;
+
+    dynamic_params.angular_z_has_velocity_limits = config.angular_z_has_velocity_limits;
+    dynamic_params.angular_z_min_velocity = config.angular_z_min_velocity;
+    dynamic_params.angular_z_max_velocity = config.angular_z_max_velocity;
+    dynamic_params.angular_z_has_acceleration_limits = config.angular_z_has_acceleration_limits;
+    dynamic_params.angular_z_min_acceleration = config.angular_z_min_acceleration;
+    dynamic_params.angular_z_max_acceleration = config.angular_z_max_acceleration;
+    dynamic_params.angular_z_has_jerk_limits = config.angular_z_has_jerk_limits;
+    dynamic_params.angular_z_min_jerk = config.angular_z_min_jerk;
+    dynamic_params.angular_z_max_jerk = config.angular_z_max_jerk;
+
     dynamic_params_.writeFromNonRT(dynamic_params);
 
     ROS_INFO_STREAM_NAMED(name_, "Dynamic Reconfigure:\n" << dynamic_params);
@@ -757,6 +848,26 @@ namespace diff_drive_controller{
     left_wheel_radius_multiplier_  = dynamic_params.left_wheel_radius_multiplier;
     right_wheel_radius_multiplier_ = dynamic_params.right_wheel_radius_multiplier;
     wheel_separation_multiplier_   = dynamic_params.wheel_separation_multiplier;
+
+    limiter_lin_.has_velocity_limits = dynamic_params.linear_x_has_velocity_limits;
+    limiter_lin_.max_velocity = dynamic_params.linear_x_max_velocity;
+    limiter_lin_.min_velocity = dynamic_params.linear_x_min_velocity;
+    limiter_lin_.has_acceleration_limits = dynamic_params.linear_x_has_acceleration_limits;
+    limiter_lin_.max_acceleration = dynamic_params.linear_x_max_acceleration;
+    limiter_lin_.min_acceleration = dynamic_params.linear_x_min_acceleration;
+    limiter_lin_.has_jerk_limits = dynamic_params.linear_x_has_jerk_limits;
+    limiter_lin_.max_jerk = dynamic_params.linear_x_max_jerk;
+    limiter_lin_.min_jerk = dynamic_params.linear_x_min_jerk;
+
+    limiter_ang_.has_velocity_limits = dynamic_params.angular_z_has_velocity_limits;
+    limiter_ang_.max_velocity = dynamic_params.angular_z_max_velocity;
+    limiter_ang_.min_velocity = dynamic_params.angular_z_min_velocity;
+    limiter_ang_.has_acceleration_limits = dynamic_params.angular_z_has_acceleration_limits;
+    limiter_ang_.max_acceleration = dynamic_params.angular_z_max_acceleration;
+    limiter_ang_.min_acceleration = dynamic_params.angular_z_min_acceleration;
+    limiter_ang_.has_jerk_limits = dynamic_params.angular_z_has_jerk_limits;
+    limiter_ang_.max_jerk = dynamic_params.angular_z_max_jerk;
+    limiter_ang_.min_jerk = dynamic_params.angular_z_min_jerk;
 
     publish_period_ = ros::Duration(1.0 / dynamic_params.publish_rate);
     enable_odom_tf_ = dynamic_params.enable_odom_tf;
