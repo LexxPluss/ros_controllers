@@ -59,19 +59,19 @@ static bool hasCollisionGeometry(const urdf::LinkConstSharedPtr& link)
 {
   if (!link)
   {
-    ROS_ERROR("Link pointer is null.");
+    ROS_WARN("Link pointer is null.");
     return false;
   }
 
   if (!link->collision)
   {
-    ROS_ERROR_STREAM("Link " << link->name << " does not have collision description. Add collision description for link to urdf.");
+    ROS_WARN_STREAM("Link " << link->name << " does not have collision description. Add collision description for link to urdf.");
     return false;
   }
 
   if (!link->collision->geometry)
   {
-    ROS_ERROR_STREAM("Link " << link->name << " does not have collision geometry description. Add collision geometry description for link to urdf.");
+    ROS_WARN_STREAM("Link " << link->name << " does not have collision geometry description. Add collision geometry description for link to urdf.");
     return false;
   }
   return true;
@@ -138,7 +138,7 @@ static bool getWheelRadius(const urdf::LinkConstSharedPtr& wheel_link, double& w
     return true;
   }
 
-  ROS_ERROR_STREAM("Wheel link " << wheel_link->name << " is NOT modeled as a cylinder or sphere!");
+  ROS_WARN_STREAM("Wheel link " << wheel_link->name << " is NOT modeled as a cylinder or sphere!");
   return false;
 }
 
@@ -181,7 +181,7 @@ namespace diff_drive_controller{
 
     if (left_wheel_names.size() != right_wheel_names.size())
     {
-      ROS_ERROR_STREAM_NAMED(name_,
+      ROS_WARN_STREAM_NAMED(name_,
           "#left wheels (" << left_wheel_names.size() << ") != " <<
           "#right wheels (" << right_wheel_names.size() << ").");
       return false;
@@ -607,7 +607,7 @@ namespace diff_drive_controller{
       // check that we don't have multiple publishers on the command topic
       if (!allow_multiple_cmd_vel_publishers_ && sub_command_.getNumPublishers() > 1)
       {
-        ROS_ERROR_STREAM_THROTTLE_NAMED(1.0, name_, "Detected " << sub_command_.getNumPublishers()
+        ROS_WARN_STREAM_THROTTLE_NAMED(1.0, name_, "Detected " << sub_command_.getNumPublishers()
             << " publishers. Only 1 publisher is allowed. Going to brake.");
         brake();
         return;
@@ -631,7 +631,7 @@ namespace diff_drive_controller{
     }
     else
     {
-      ROS_ERROR_NAMED(name_, "Can't accept new commands. Controller is not running.");
+      ROS_WARN_NAMED(name_, "Can't accept new commands. Controller is not running.");
     }
   }
 
@@ -642,7 +642,7 @@ namespace diff_drive_controller{
       XmlRpc::XmlRpcValue wheel_list;
       if (!controller_nh.getParam(wheel_param, wheel_list))
       {
-        ROS_ERROR_STREAM_NAMED(name_,
+        ROS_WARN_STREAM_NAMED(name_,
             "Couldn't retrieve wheel param '" << wheel_param << "'.");
         return false;
       }
@@ -651,7 +651,7 @@ namespace diff_drive_controller{
       {
         if (wheel_list.size() == 0)
         {
-          ROS_ERROR_STREAM_NAMED(name_,
+          ROS_WARN_STREAM_NAMED(name_,
               "Wheel param '" << wheel_param << "' is an empty list");
           return false;
         }
@@ -660,7 +660,7 @@ namespace diff_drive_controller{
         {
           if (wheel_list[i].getType() != XmlRpc::XmlRpcValue::TypeString)
           {
-            ROS_ERROR_STREAM_NAMED(name_,
+            ROS_WARN_STREAM_NAMED(name_,
                 "Wheel param '" << wheel_param << "' #" << i <<
                 " isn't a string.");
             return false;
@@ -679,7 +679,7 @@ namespace diff_drive_controller{
       }
       else
       {
-        ROS_ERROR_STREAM_NAMED(name_,
+        ROS_WARN_STREAM_NAMED(name_,
             "Wheel param '" << wheel_param <<
             "' is neither a list of strings nor a string.");
         return false;
@@ -706,7 +706,7 @@ namespace diff_drive_controller{
     std::string robot_model_str="";
     if (!res || !root_nh.getParam(model_param_name,robot_model_str))
     {
-      ROS_ERROR_NAMED(name_, "Robot description couldn't be retrieved from param server.");
+      ROS_WARN_NAMED(name_, "Robot description couldn't be retrieved from param server.");
       return false;
     }
 
@@ -717,14 +717,14 @@ namespace diff_drive_controller{
 
     if (!left_wheel_joint)
     {
-      ROS_ERROR_STREAM_NAMED(name_, left_wheel_name
+      ROS_WARN_STREAM_NAMED(name_, left_wheel_name
                              << " couldn't be retrieved from model description");
       return false;
     }
 
     if (!right_wheel_joint)
     {
-      ROS_ERROR_STREAM_NAMED(name_, right_wheel_name
+      ROS_WARN_STREAM_NAMED(name_, right_wheel_name
                              << " couldn't be retrieved from model description");
       return false;
     }
@@ -749,7 +749,7 @@ namespace diff_drive_controller{
       // Get wheel radius
       if (!getWheelRadius(model->getLink(left_wheel_joint->child_link_name), wheel_radius_))
       {
-        ROS_ERROR_STREAM_NAMED(name_, "Couldn't retrieve " << left_wheel_name << " wheel radius");
+        ROS_WARN_STREAM_NAMED(name_, "Couldn't retrieve " << left_wheel_name << " wheel radius");
         return false;
       }
     }
