@@ -565,8 +565,8 @@ namespace diff_drive_controller{
     const double vel_right = (curr_cmd.lin + curr_cmd.ang * ws / 2.0)/rwr;
     if (wheel_cmd_vel_pub_ && wheel_cmd_vel_pub_->trylock())
     {
-      wheel_cmd_vel_pub_->msg_.left = vel_left;
-      wheel_cmd_vel_pub_->msg_.right = vel_right;
+      wheel_cmd_vel_pub_->msg_.left = vel_left * lwr;   // [m/s]
+      wheel_cmd_vel_pub_->msg_.right = vel_right * rwr; // [m/s]
       wheel_cmd_vel_pub_->unlockAndPublish();
     }
 
