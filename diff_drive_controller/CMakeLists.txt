@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
     dynamic_reconfigure
     geometry_msgs
     hardware_interface
+    lexxauto_msgs
     nav_msgs
     pluginlib
     realtime_tools

@@ -47,6 +47,7 @@
 #include <dynamic_reconfigure/server.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <lexxauto_msgs/WheelVelocity.h>
 #include <memory>
 #include <nav_msgs/Odometry.h>
 #include <realtime_tools/realtime_buffer.h>
@@ -145,6 +146,9 @@ namespace diff_drive_controller{
 
     /// Controller state publisher
     std::shared_ptr<realtime_tools::RealtimePublisher<control_msgs::JointTrajectoryControllerState> > controller_state_pub_;
+
+    /// Publish wheel command velocity:
+    std::shared_ptr<realtime_tools::RealtimePublisher<lexxauto_msgs::WheelVelocity> > wheel_cmd_vel_pub_;
 
     /// Wheel separation, wrt the midpoint of the wheel width:
     double wheel_separation_;

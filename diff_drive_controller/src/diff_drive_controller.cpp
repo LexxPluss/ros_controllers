@@ -336,6 +336,7 @@ namespace diff_drive_controller{
     if (publish_cmd_)
     {
       cmd_vel_pub_.reset(new realtime_tools::RealtimePublisher<geometry_msgs::TwistStamped>(controller_nh, "cmd_vel_out", 100));
+      wheel_cmd_vel_pub_.reset(new realtime_tools::RealtimePublisher<lexxauto_msgs::WheelVelocity>(controller_nh, "wheel_cmd_vel", 100));
     }
 
     // Wheel joint controller state:
@@ -562,6 +563,12 @@ namespace diff_drive_controller{
     // Compute wheels velocities:
     const double vel_left  = (curr_cmd.lin - curr_cmd.ang * ws / 2.0)/lwr;
     const double vel_right = (curr_cmd.lin + curr_cmd.ang * ws / 2.0)/rwr;
+    if (wheel_cmd_vel_pub_ && wheel_cmd_vel_pub_->trylock())
+    {
+      wheel_cmd_vel_pub_->msg_.left = vel_left;
+      wheel_cmd_vel_pub_->msg_.right = vel_right;
+      wheel_cmd_vel_pub_->unlockAndPublish();
+    }
 
     // Set wheels velocities:
     for (size_t i = 0; i < wheel_joints_size_; ++i)
